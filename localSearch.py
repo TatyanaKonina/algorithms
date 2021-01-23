@@ -21,25 +21,33 @@ def calc_result_distance(route,cords_list):
     for i in range(1,len(route)):
         res_distance+=two_point_dist(cords_list[route[i]],cords_list[route[i-1]])
     return res_distance
-        
+
+def swap_two_opt(route,i,k):
+    # new_route = []
+    new_route = route[:i]
+    new_route += route[i:k]
+    new_route = new_route[::-1]
+    new_route += route[k:]
+    return new_route
+       
 def two_opt(route,distance):
-    for i in range(1, len(route)-2):
-           for j in range(i+1, len(route)):
-                if j-i == 1: continue 
-                improved_route = route[:]
-                improved_route[i:j] = route[j-1:i-1:-1]
-                new_distance=calc_result_distance(improved_route,cords_list)
-                if(new_distance<distance):
-                    distance=new_distance
-                    route=improved_route
+    for i in range(len(route)):
+        for k in range(i,len(route)):
+            improved_route = swap_two_opt(route[:],i,k)
+            new_distance = calc_result_distance(improved_route,cords_list)
+            if(new_distance<distance):
+                distance=new_distance
+                route=improved_route
     return route
+
+
 
 def local_search(start_route, cords_list):
     res_distance = calc_result_distance(start_route,cords_list)
     return two_opt(start_route,res_distance)
 
 def ILS(id_list,cords_list):
-    
+
     start_route = sample([x for x in range(len(id_list))],len(id_list))
     route = local_search(start_route,cords_list)
     min_distance = calc_result_distance(route,cords_list)
