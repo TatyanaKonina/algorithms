@@ -35,18 +35,11 @@ def ILS(id_list,cords_list,max_attempts,max_itter):
     start_route,dist = nearest_neighbour(cords_list,lines)
     route,min_distance = local_search(start_route,cords_list,max_attempts)
     for i in range(max_itter):
-        print(i)
-        print("Distance after Iterated 2-Opt Approach:",min_distance)
-        print(route)
-        lis1 = [ x+ 1 for x in route]
-        print(" ".join(map(str, lis1)))
         new_route = do_pertubation(route)
         new_route,new_distance=local_search(new_route,cords_list,max_attempts)    
         if(new_distance<min_distance):
             min_distance=new_distance
             route=new_route    
-    print("Distance after Iterated 2-Opt Approach:",min_distance)
-    print(route)
     return route
         
 lines = 703

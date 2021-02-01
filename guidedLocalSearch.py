@@ -68,7 +68,6 @@ def guided_search(cords_list,city_tour,alpha = 0.3, local_search_optima = 1000, 
         if (calc_result_distance(solution,cords_list) < calc_result_distance( best_solution,cords_list) or  not(best_solution)):
             best_solution = copy.deepcopy(solution) 
         count = count + 1
-        print("Iteration = ", count, " Distance ", calc_result_distance( best_solution,cords_list))
     return best_solution
 
 
@@ -77,5 +76,3 @@ start_route,dist = nearest_neighbour(cords_list,1000)
 
 
 route = guided_search(cords_list,city_tour = start_route, alpha = 0.1, local_search_optima = 1000, max_attempts = 10, iterations = 1000)
-lis1 = [ x+ 1 for x in route]
-print(" ".join(map(str, lis1)))
