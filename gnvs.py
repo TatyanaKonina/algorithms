@@ -24,6 +24,7 @@ class generalVNS():
                     self.cluster = bestClusters
                     self.numberOfClusters = i
                     i = 1
+        print(self.ge,self.cluster,self.numberOfClusters)
                 
 
 
@@ -33,7 +34,6 @@ class generalVNS():
         if(amountOfParts <= min(sizeOfRow,sizeOfColumn)):
             clusters = []
             partSize = int(sizeOfRow / (amountOfParts))
-
             for i in range(amountOfParts):
                 start = int(i * partSize + 1)
                 if (i != amountOfParts - 1):
@@ -51,7 +51,6 @@ class generalVNS():
         for i in range (startIndex,endColumnIndex + 1):
             sequenceNumber.append(i)
         for i in range(startIndex,endRowIndex + 1):
-            print(sequenceNumber)
             d[i] = sequenceNumber
         cluster.append(d)
 
@@ -72,31 +71,32 @@ class generalVNS():
                 maxGe = max(rowGe,columnGe)
                 if maxGe > groupingEfficacy:
                     groupingEfficacy = maxGe
-                    bestAddingRowCluster = rowResultcluster if maxGe == rowGe else columnResultCluster
+                    bestAddingRowCluster = rowResultCluster if maxGe == rowGe else columnResultCluster
                     l = 0
             return bestAddingRowCluster
 
     def getBestRowCluster(self,iteratedCluster):
+        ge = -1
         cluster = copy.deepcopy(iteratedCluster)
         rowChangedClusters = []
-        for i in range (1,self.n):
+        for i in range (1,self.n + 1):
             rowChangedClusters,rowGe = self.addRow(iteratedCluster,i)
-            if rowGe > self.ge:
-                self.ge = rowGe
-                self.cluster = rowChangedClusters
-        return rowGe,rowChangedClusters
+            if rowGe > ge:
+                ge = rowGe
+                cluster = rowChangedClusters
+        return rowGe,cluster
 
     def getBestColumnCluster(self,iteratedCluster):
+        ge = -1
         cluster = copy.deepcopy(iteratedCluster)
         clusterGe = self.groupingEfficacy(cluster)
         columnChangedClusters = []
-        for i in range (1,self.m):
-            columnChangedClusters = self.addColumn(iteratedCluster,i)
-            columnGe = groupingEfficacy(rowChangedClusters)
-            if columnGe > clusterGe:
-                self.ge = columnGe
-                self.cluster = columnChangedClusters
-        return columnGe,columnChangedClusters
+        for i in range (1,self.m + 1):
+            columnChangedClusters,columnGe = self.addColumn(iteratedCluster,i)
+            if columnGe > ge:
+                ge = columnGe
+                cluster = columnChangedClusters
+        return ge,cluster
 
     def addRow(self,clusters,rowIndex):
         ge = self.groupingEfficacy(clusters)
@@ -106,31 +106,39 @@ class generalVNS():
                 if rowIndex in clusters[i][0]:
                     indexOfMatrix = i
                     break
-        
-        for i in range(len(clusters)):
-            if i != indexOfMatrix:
-                copyClusters = copy.deepcopy(clusters)
-                del copyClusters[indexOfMatrix][0][rowIndex]
-                cluster = copyClusters[i]
-                # d = {}
-                # d
-                # print(list(clusters[i][0].values())[0])
-                cluster[0][rowIndex] = list(clusters[i][0].values())[0]
-                tempGe = self.groupingEfficacy(copyClusters)
-                if(tempGe > ge):
-                    ge = tempGe
-                    bestCluster = copyClusters
+        if(len(clusters[indexOfMatrix][0]) > 1):
+            for i in range(len(clusters)):
+                if i != indexOfMatrix:
+                    copyClusters = copy.deepcopy(clusters)
+                    del copyClusters[indexOfMatrix][0][rowIndex]
+                    cluster = copyClusters[i]
+                    cluster[0][rowIndex] = list(clusters[i][0].values())[0]
+                    tempGe = self.groupingEfficacy(copyClusters)
+                    if(tempGe > ge):
+                        ge = tempGe
+                        bestCluster = copyClusters
         return bestCluster,ge
+
     def addColumn(self,clusters,columnIndex):
         ge = self.groupingEfficacy(clusters)
         bestCluster = clusters
         
-        indexOfMatrix = []
-        
+        indexOfMatrix = 0
         for i in range(len(clusters)):
-            pass
-        return bestCluster
-
+            if columnIndex in list(clusters[i][0].values())[0]:
+                indexOfMatrix = i
+                break
+        if(len(list(clusters[indexOfMatrix][0].values())[0]) > 1):
+            for i in range(len(clusters)):
+                if i != indexOfMatrix:
+                    copyClusters = copy.deepcopy(clusters)
+                    list(copyClusters[indexOfMatrix][0].values())[0].remove(columnIndex)
+                    list(copyClusters[i][0].values())[0].append(columnIndex)
+                    tempGe = self.groupingEfficacy(copyClusters)
+                    if(tempGe > ge):
+                        ge = tempGe
+                        bestCluster = copyClusters
+        return bestCluster,ge
 
     def groupingEfficacy(self,clusters):
         totalNumberOne = 0
@@ -139,7 +147,6 @@ class generalVNS():
         numberOneInsideCluster = 0
         numberZeroInsideCluster = 0
         for i in range(len(clusters)):
-            print(clusters[i])
             for key in clusters[i][0]:
                 for j in clusters[i][0][key]:
                     if(self.matrix[key - 1][j - 1] == 1):
