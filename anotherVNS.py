@@ -59,20 +59,27 @@ class generalVNS:
             for i in range(len(cell)):
                 oneIn += sum(cell[i])
                 zeroIn += len(cell[i]) - sum(cell[i])
-        # oneOut = allOnes - oneIn
         return (oneIn )/(allOnes - zeroIn)
 
 
 
-    def SolutionForParts(self,startNumClusters):
+
+
+    def initialSol(self,startNumClusters):
         cell_borders = self.randomParts(startNumClusters,1)
         self.randomMachine(startNumClusters,cell_borders)
         self.ge = self.groupingEfficacy()
-        
+        initM = self.matrix.copy()
+        initB = self.cellBorders.copy()
+        return initB,initM
 
-    def initialSol(self,startNumClusters):
-        cellBorders = self.SolutionForParts(startNumClusters)
+    def move(self):
+        
 
 
     def __call__(self, startNumClusters):
         bestBorders,bestMatrix = self.initialSol(startNumClusters)
+        print("Initial: ",self.ge)
+        while(True):
+            while(True):
+                newSol,newBorder = self.move()
