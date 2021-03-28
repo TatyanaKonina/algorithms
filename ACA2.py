@@ -1,5 +1,9 @@
 import math
 import random
+
+
+# там есть скриншотики в ветке
+
 class ACA():
     def __init__(self,max_iters,ants_num,pheromone_intensity,pheromone_importance,distance_priority,speed_evaporation):
         self.max_iters = max_iters
